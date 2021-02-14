@@ -12,6 +12,10 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
+        test: /\.js$/i,
+        use: ['babel-loader']
+      },
+      {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader']
       },
