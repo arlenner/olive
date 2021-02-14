@@ -8,8 +8,6 @@ module.exports = {
   entry: {
     index: "./src/index.js",
     "index.min": "./src/index.js",
-    demo: "./demo/index.js",
-    "index.css": "./demo/index.css"
   },
   output: {
     path: path.resolve(__dirname, "lib"),
@@ -34,15 +32,6 @@ module.exports = {
           presets: ["@babel/preset-env"],
         },
       },
-      {
-        test: /\.css/,
-        use: ['style-loader', 'css-loader',],
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.(png|jpe?g|gif)$/i,
-        use: ['file-loader']
-      }
     ]
   },
 };
