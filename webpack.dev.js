@@ -1,4 +1,5 @@
 const merge = require('webpack-merge')
+const path = require('path')
 const webpack = require('webpack')
 const common = require('./webpack.common.js')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -7,7 +8,13 @@ module.exports = merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
   entry: {
-    index: './demo/index.js'
+    index: './lib/demo.js'
+  },
+  output: {
+    path: path.resolve(__dirname, 'lib'),
+    filename: 'demo.js',
+    library: 'demo-lib',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [
