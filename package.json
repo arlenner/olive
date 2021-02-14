@@ -41,13 +41,13 @@
   "author": "Alexander Ross Lennert <arlenross02@gmail.com> (http://arlenner.github.io/portfolio)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/arlenner/olivejs/issues"
+    "url": "https://github.com/arlenner/olive/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/olivejs"
+    "url": "https://github.com/olive"
   },
-  "homepage": "https://github.com/olivejs#readme",
+  "homepage": "https://github.com/olive#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
