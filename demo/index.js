@@ -1,4 +1,4 @@
-import { html, navigate } from "../src/index.js";
+import { html, navigate } from "../lib/index.js";
 import {
   HOME, BIO, PROJECTS,
   ACTIONS,
