@@ -1,5 +1,5 @@
 {
-  "name": "olive",
+  "name": "olive-spa",
   "version": "0.0.1",
   "description": "Tiny vanilla-based SPA framework.",
   "main": "lib/index.min.js",
@@ -48,6 +48,9 @@
     "url": "https://github.com/olivejs"
   },
   "homepage": "https://github.com/olivejs#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "keywords": [
     "SPA",
     "framework",
