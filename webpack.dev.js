@@ -11,7 +11,7 @@ module.exports = merge(common, {
     index: './lib/demo.js'
   },
   output: {
-    path: path.resolve(__dirname, 'lib'),
+    path: path.resolve(__dirname, 'demo-lib'),
     filename: 'demo.js',
     library: 'demo-lib',
     libraryTarget: 'umd'

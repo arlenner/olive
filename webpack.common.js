@@ -8,6 +8,7 @@ module.exports = {
   entry: {
     index: "./src/index.js",
     "index.min": "./src/index.js",
+    demo: "./demo/index.js"
   },
   output: {
     path: path.resolve(__dirname, "lib"),
@@ -35,7 +36,11 @@ module.exports = {
       {
         test: /\.css/,
         use: ['style-loader', 'css-loader',],
-        include: __dirname + '/demo'
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: ['file-loader']
       }
     ]
   },
