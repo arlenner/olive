@@ -8,7 +8,8 @@ module.exports = {
   entry: {
     index: "./src/index.js",
     "index.min": "./src/index.js",
-    demo: "./demo/index.js"
+    demo: "./demo/index.js",
+    "index.css": "./demo/index.css"
   },
   output: {
     path: path.resolve(__dirname, "lib"),
