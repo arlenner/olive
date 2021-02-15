@@ -85,8 +85,8 @@ const rxChangeColor = (model, data) => ({
 })
 
 const rx = (model, [k, data]) =>
-  k === TOGGLE ? rxChangeColor(model, data)
-: /*else*/       model
+  k === CHANGE_COLOR ? rxChangeColor(model, data)
+: /*else*/             model
 
 //MODEL
 const model = {
