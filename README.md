@@ -107,8 +107,8 @@ const ChangeButton = () =>
   html()
     .button().text("Click Me.")
       .on('click', hx => hx.dispatch(ChangeColor('red')))
-      .subscribe({                          
-        [CHANGE_COLOR]: (html, color) =>
+      .subscribe({ //model is passed as second param to subscriptions                
+        [CHANGE_COLOR]: (html, {color}) =>
           html.css({ color })
       })
 ```
