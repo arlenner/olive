@@ -1,8 +1,11 @@
 # olive 🍸
 ## A vanillaJS based declarative DOM API.
-*This is still a WIP, I'm developing a showcase website and I add features as necessary. Expect radical/breaking changes to the API until I create an actual release version. I'll let you know when you should actually use it!*
+_OliveJS is finally released! You can install it as an npm package:_
+```
+> npm i olive-spa
+```
 
-olive uses a wrapper around native DOM functions to provide a consistent and declarative API. olive is tiny. It currently sits around 300 LOC. It's essentially native DOM except the wrapper object keeps track of it's targets, allowing us to chain dot-operator functions to declare our html structure, attributes, events, and reactive updates. And it's all powered by vanillaJS and a tiny wrapper.
+OliveJS is a lightweight vanilla SPA framework. Docs still a WIP. 
 
 ## Declaring a Component
 ```javascript
