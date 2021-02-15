@@ -9,13 +9,15 @@ OliveJS is a lightweight vanilla SPA framework. Docs still a WIP.
 
 ## Declaring a Component
 ```javascript
+import { html } from 'olive-spa'
+
 //declare a component as a simple function. This produces a single empty main element.
-const myComponent = () => 
+const MyComponent = () => 
   html().main()
   
 //there's nothing stopping you from defining a static component, notice it's not a function.
 //this will be in memory indefinitely, but it will always refer to the same DOM object.
-const myStaticComponent = 
+const MyStaticComponent = 
   html().div()
 
 ```
@@ -25,7 +27,7 @@ olive was designed to use a fluent API everywhere that HTML would be expected. I
 
 ```javascript
 //we can use any element and most attributes via dot operator:
-const square = (size, color) => 
+const Square = (size, color) => 
   html().div().css({
     height: `${size}px`,
     width: `${size}px`,
@@ -39,11 +41,12 @@ Like other front-end libraries, olive has an element repeater function.
 
 const myData = [ {name: 'Ross'}, {name: 'Kay'} ]
 
-const dataConsumer = () =>
+const DataConsumer = () =>
   html().each(myData, (html, {name}) => html.h1().text(name))
-You could also use repeat:
 
-const dataless = () => html().repeat(3, html => html.h1().text('hello!'))
+//You could also use repeat:
+
+const Dataless = () => html().repeat(3, html => html.h1().text('hello!'))
 /*
 <h1>hello!</h1>
 <h1>hello!</h1>
@@ -56,7 +59,7 @@ olive keeps track of its target elements procedurally. That means until you decl
 ```javascript
 //olive procedurally tracks the target dom element upon construction
 //this component doesn't update, so it will never re-render any of it's parts unless replaced by parent updates.
-const anotherComp = () => 
+const AnotherComp = () => 
   html()
     .main().open()          //<- current target is the main element, open() nests next elems
       .article().open()     //<- current target is the article element
@@ -67,20 +70,46 @@ const anotherComp = () =>
 olive can handle reactivity too, and with pinpoint accuracy. olive will only run updates on the specific target elements subscribe is called upon
 
 ```javascript
-//we can make any target element reactive by using the .update() function
+//we can make any target element reactive by using the `.subscribe()` function combined with a state store.
+import { html, makeStore } from 'olive-spa'
 
-let selected = false  //<- some state
+//ACTIONS
+const CHANGE_COLOR = 'Change Color'
+//ACTION CTORS
+const ChangeColor = (color) => [CHANGE_COLOR, color]
 
-const toggleButton = () => 
+//REDUCERS
+const rxChangeColor = (model, data) => ({
+  ...model,
+  color: data
+})
+
+const rx = (model, [k, data]) =>
+  k === TOGGLE ? rxChangeColor(model, data)
+: /*else*/       model
+
+//MODEL
+const model = {
+  color: 'black'
+}
+
+//STORE
+const store = makeStore(model, rx)
+
+
+//APPLICATION
+const App = () =>
+  html()
+    .use(store)
+    .concat(ToggleButton())
+
+const ChangeButton = () => 
   html()
     .button().text("Click Me.")
-      .on('click', () => {                  //.on() registers an event listener on our component         
-        selected = !selected                //we can manipulate our state
-        send('ToggleColor', selected)       //use send() to trigger any component with the ToggleColor update to fire
-      })
-      .subscribe({                          //when send() occurs, this logic will be run on our target element
-        ToggleColor: (html, data) =>        //this particular update will cause the color to change to indicate that you've toggled something.
-          html.css({ color: selected ? 'red' : '' })
+      .on('click', hx => hx.dispatch(ChangeColor('red')))
+      .subscribe({                          
+        [CHANGE_COLOR]: (html, color) =>
+          html.css({ color })
       })
 ```
 
@@ -89,40 +118,44 @@ We can use olive's concat method to compose our components:
 
 ```javascript
 //connect your components together arbitrarily
-const app = () =>
+const App = () =>
   html()
-    .concat(square(100, 'red'))
-    .concat(toggleButton())
+    .concat(Square(100, 'blue'))
+    .concat(ChangeButton())
 ```
 
 ## Routing Support
 olive supports history-API based routing.
 
 ```javascript
+import { navigate } from 'olive-spa'
+
 const HOME     = '/home',
       CONTACT  = '/contact',
       ABOUT    = '/about',
       PROJECTS = '/projects'
       
-const home = () => 
+const Home = () => 
   html()...
   
-const contact = () => 
+const Contact = () => 
   html()...
   
-const about = () => 
+const About = () => 
   html()...
   
-const projects = () => 
+const Projects = () => 
   html()...
       
 const app = () => 
   html()
     .router({
-      '/':         home,
-      [HOME]:      home,
-      [CONTACT]:   contact,
-      [ABOUT]:     about,
-      [PROJECTS]:  projects,
+      '/':         Home,
+      [HOME]:      Home,
+      [CONTACT]:   Contact,
+      [ABOUT]:     About,
+      [PROJECTS]:  Projects,
     })
+
+navigate(HOME, /*...args*/) //=> replace router outlet w component registered to HOME
 ```
