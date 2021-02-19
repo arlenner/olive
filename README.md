@@ -99,10 +99,6 @@ const store = makeStore(model, rx)
 
 
 //APPLICATION
-const App = () =>
-  html()
-    .use(store)
-    .concat(ToggleButton())
 
 const ChangeButton = () => 
   html()
@@ -112,6 +108,12 @@ const ChangeButton = () =>
         [CHANGE_COLOR]: (html, {color}) =>
           html.css({ color })
       })
+
+const App = () =>
+  html()
+    .use(store)
+    .concat(ChangeButton())
+
 ```
 
 ## Composition-Forward by Design
@@ -160,3 +162,9 @@ const app = () =>
 
 navigate(HOME, /*...args*/) //=> replace router outlet w component registered to HOME
 ```
+
+## Isolating Side Effects
+Olive was designed with functional purity in mind. So I included the
+ability to write complex middlewares for olive stores.
+go to https://js.plainenglish.io/understanding-redux-through-implementation-pt-2-20707b3ef3f5 to read about how middleware works in olive. The store I'm writing about is the literal implementation olive uses.
+
