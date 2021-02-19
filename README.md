@@ -42,11 +42,12 @@ Like other front-end libraries, olive has an element repeater function.
 const myData = [ {name: 'Ross'}, {name: 'Kay'} ]
 
 const DataConsumer = () =>
-  html().each(myData, (html, {name}) => html.h1().text(name))
+  html().each(myData, (hx, {name}) => hx.h1().text(name))
 
 //You could also use repeat:
 
-const Dataless = () => html().repeat(3, html => html.h1().text('hello!'))
+const SimpleRepeater = () => 
+  html().repeat(3, hx => hx.h1().text('hello!'))
 /*
 <h1>hello!</h1>
 <h1>hello!</h1>
