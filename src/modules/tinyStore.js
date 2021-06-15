@@ -1,3 +1,6 @@
+import { deepCopy } from "../utils/deepCopy"
+import { NO_REDUCER } from "./html/symbols"
+
 export const pipe = (...fns) => (model, action) => {
     let result = action
     fns.forEach(fn => {
@@ -5,46 +8,61 @@ export const pipe = (...fns) => (model, action) => {
     })
     return result
   }
+
+
+/**
+ * @template T
+ * @typedef {[k: string, data: T]} Action
+ */
+
+/**
+ * @template T
+ * @typedef {{ id: string, state: () => T, dispatch: (action: string, data: unknown) => void}} Store
+ */
   
-const deepCopy = obj => {
-    let result = {}
-    Object.keys(obj).forEach(k => 
-      result[k] = (
-        Array.isArray(obj[k])      ? obj[k].slice()
-      : typeof obj[k] === 'object' ? deepCopy(obj[k])
-      : /*else*/                     obj[k]
-      )
-    )
-    return result
-  }
-  
-export const tinyStore = (model, rdfn, mw = null) => {
-      let store = deepCopy(model)
-      const queue = []
-      let dispatching = false
-      
-      const state = () => store  
-      
-      const dispatch = action => {  
+/**
+ * @template T
+ * @template A
+ * @template B
+ * @param {{
+ *  id: string
+ *  model: T
+ *  reducer: (model: T, action: Action<A>) => T
+ *  mw: (model: T, action: Action<A>) => Action<B>
+ * }} param0 
+ * @returns {Store<T>}
+ */
+export const tinyStore = ({id = 'olive-default-dispatcher', model = null, reducer = null, mw = null}) => {
+    let store = deepCopy(model) || {}
+    store.id = id
+    const queue = []
+    let dispatching = false
+    
+    const state = () => store  
+    
+    const dispatch = action => { 
         if(dispatching) {
-          queue.push(action)
-          return
+            queue.push(action)
+            return
         }
         dispatching = true
         let result = action
         
         if(mw && typeof mw === 'function') {
-          result = mw(store, action)
-        }        
-        store = rdfn(store, result)
-    
+            result = mw(store, action)
+        }
+        if(reducer)
+            store = reducer(store, result)
+
         while(queue.length > 0) {
             let a = queue.pop()
             result = mw(store, a)
-            store = rdfn(store, result)
+            if(reducer)
+                store = reducer(store, result)
         }      
         dispatching = false
     }    
-    return { state, dispatch }
+    
+    return { id: store.id, state, dispatch, [NO_REDUCER]: reducer === null || reducer === undefined }
 }
   
