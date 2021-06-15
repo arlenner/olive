@@ -1,8 +1,9 @@
 {
   "name": "olive-spa",
-  "version": "3.0.2",
+  "version": "4.0.3",
   "description": "Tiny vanilla-based SPA framework.",
-  "main": "lib/index.min.js",
+  "main": "dist/index.min.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "start": "webpack-dev-server --port 8080 --open --config webpack.config.js",
@@ -12,7 +13,8 @@
     "prepush": "yarn lint && yarn test"
   },
   "files": [
-    "index.min.js"
+    "index.min.js",
+    "index.d.ts"
   ],
   "devDependencies": {
     "@babel/cli": "^7.0.0",
