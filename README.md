@@ -88,46 +88,25 @@ olive can handle reactivity too, and with pinpoint accuracy. olive will only run
 
 ```javascript
 //we can make any target element reactive by using the `.subscribe()` function combined with a state store.
-import { html, makeStore } from 'olive-spa'
+import { html, customDispatcher } from 'olive-spa'
 
-//ACTIONS
 const CHANGE_COLOR = 'Change Color'
-//ACTION CTORS
-const ChangeColor = (color) => [CHANGE_COLOR, color]
-
-//REDUCERS
-const rxChangeColor = (model, data) => ({
-    ...model,
-    color: data
-})
-
-const rx = (model, [k, data]) =>
-    k === CHANGE_COLOR  ? rxChangeColor(model, data)
-: /*else*/                model
-
-//MODEL
-const model = {
-  color: 'black'
-}
-
-//STORE
-const store = makeStore(model, rx)
-
-
-//APPLICATION
 
 const ChangeButton = () => 
     html()
-        .button().text("Click Me.")
-        .on('click', hx => hx.dispatch(ChangeColor('red')))
+        .button()
+        .text("Click Me.")
+        .on('click', hx => hx.dispatch(CHANGE_COLOR, 'red'))
         .subscribe({ //model is passed as second param to subscriptions                
-            [CHANGE_COLOR]: (html, {color}) =>
-            html.css({ color })
+            [CHANGE_COLOR]: (hx, color) =>
+            hx.css({ color })
         })
 
 const App = () =>
     html()
-        .use(store)
+        .div()
+        .class('app-container')
+        .use(customDispatcher({id: 'AppDispatcher'}))
         .concat(ChangeButton())
 
 ```
@@ -186,5 +165,20 @@ navigate(HOME, /*...args*/) //=> replace router outlet w component registered to
 ## Isolating Side Effects
 Olive was designed with functional purity in mind. So I included the
 ability to write complex middlewares for olive stores.
-go to https://js.plainenglish.io/understanding-redux-through-implementation-pt-2-20707b3ef3f5 to read about how middleware works in olive. The store I'm writing about is the literal implementation olive uses.
+go to https://js.plainenglish.io/understanding-redux-through-implementation-pt-2-20707b3ef3f5 to read about how middleware works in olive. The store I'm writing about is the literal implementation olive uses. Here's a simple devlogger middleware:
+
+```js
+const devLogger = (model, action) => {
+    const [k, data] = action
+    console.log(`Processing action [${k}]${data ? `with data: ${JSON.stringify(data, null, 2)}` : '.'}`)
+    return action
+}
+
+//use it as a middleware in your dispatcher to get logs of actions as they pass through.
+const App = () =>
+    html()
+        .div().class('app-container')
+        .use(customDispatcher({id: 'MyDispatcher', mw: devLogger}))
+        .concat(SomeOtherComponent())
+```
 
