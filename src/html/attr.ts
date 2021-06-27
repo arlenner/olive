@@ -28,28 +28,28 @@ Html.prototype.removeAttr = function(k) {
     this[TARGET].removeAttribute(k)
 }
 
+/**
+ * Sets the target element's HTML attribute to `value`. If no params passed, returns the current value of the attribute.
+ * @memberof Html
+ * @param {unknown} value Value to assign to this attribute.
+ * @returns 
+ * 
+ * ```js
+ *  const someRealElem = document.querySelector('input[type=text]')
+ *  const wrapper = Html.from(someRealElem)
+ * 
+ *  //set
+ *  wrapper.valueAttr('Hello')
+ *  //get
+ *  const textValue = wrapper.valueAttr() //=> 'Hello'
+ * 
+ *  
+ * ```
+ */
 ATTRS.forEach(attr => {
-    /**
-     * Sets the target element's HTML attribute to `value`. If no params passed, returns the current value of the attribute.
-     * @memberof Html
-     * @param {unknown} value Value to assign to this attribute.
-     * @returns 
-     * 
-     * ```js
-     *  const someRealElem = document.querySelector('input[type=text]')
-     *  const wrapper = Html.from(someRealElem)
-     * 
-     *  //set
-     *  wrapper.value('Hello')
-     *  //get
-     *  const textValue = wrapper.value() //=> 'Hello'
-     * 
-     *  
-     * ```
-     */
     Html.prototype[attr+'Attr'] = function(value) {
-        if(value === undefined) {
-            return this[TARGET].getAttribute(attr)
+        if(!value) {
+            return this[TARGET][attr] || this[TARGET].getAttribute(attr)
         }
         return this.attr(attr, value)
     }

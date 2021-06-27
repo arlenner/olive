@@ -63,8 +63,9 @@ export interface HtmlCore {
      * all registered `Dispatcher`s.
      * @param k string key to register to this callback
      * @param data data to send
+     * @param bubbles should this dispatch get caught 
      */
-    dispatch(k: string, data?: unknown): void
+    dispatch(k: string, data?: unknown, bubbles?: boolean): void
 
     /**
      * Registers a callback to the corresponding event handler for the current TARGET element. The callback may optionally use
@@ -98,7 +99,7 @@ export interface HtmlCore {
      */
     each<T>(arr: T[], fn: (hx: HtmlCursor, t: T, i?: number) => HtmlCursor): HtmlCursor;
 
-    /** @private */
+    /** add attr `k` with value `v` to this TARGET element. */
     attr(k: string, v: any): HtmlCursor
 
     /** Remove an HTML Attribute from the current TARGET element. */
@@ -151,7 +152,7 @@ export type HtmlElementFunctions = {
 }
 
 export type HtmlAttributeFunctions = {
-    [k in AttributeStrings]: (value: unknown) => HtmlCursor
+    [k in AttributeStrings]: (value?: unknown) => HtmlCursor
 }
 
 /**

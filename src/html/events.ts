@@ -25,16 +25,16 @@ Html.prototype.subscribe = function(k, cb, spec = null) {
 
     let cur = this[TARGET]
     
-    const listen = data => cb(Html.from(cur), data)
+    const listener = data => cb(Html.from(cur), data)
 
     const drop = () => {
         UPDATES[id][k].splice(
-            UPDATES[id][k].indexOf(listen), 1
+            UPDATES[id][k].indexOf(listener), 1
         )
     }
     UPDATES[id]     ||= {}
     UPDATES[id][k]  ||= []
-    UPDATES[id][k].push(listen)
+    UPDATES[id][k].push(listener)
     setDrop(cur, drop)
 
     return this

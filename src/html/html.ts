@@ -1,5 +1,4 @@
 import { TARGET, PARENT } from './symbols'
-import '../../index'
 import { HtmlCursor } from './types'
 
 

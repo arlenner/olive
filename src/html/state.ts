@@ -2,7 +2,6 @@ import { tinyStore } from "../tinyStore"
 import { getStores, getUpdates, registerDispatcher } from "./globalVars"
 import { Html } from "./html"
 import { NO_REDUCER, PARENT, TARGET } from "./symbols"
-import { Dispatcher } from './types'
 
 /**
  * @template T
@@ -20,7 +19,7 @@ Html.prototype.dispatch = function(k, data, bubbles = false) {
 
     let nearestStore = getNearestStore(this[PARENT]) || defaultDispatcher()
 
-    const { id, dispatch, state } = nearestStore
+    const { id, dispatch, state } = STORES[nearestStore.id]
     dispatch([k, data])
     
     //default dispatcher should re-route to all other dispatchers, bubbling is n/a
@@ -29,7 +28,6 @@ Html.prototype.dispatch = function(k, data, bubbles = false) {
 
             const { 
                 state: _state,
-                [NO_REDUCER]: noRdfn,
                 dispatch: _dispatch 
             } = STORES[subId]
             
@@ -37,12 +35,13 @@ Html.prototype.dispatch = function(k, data, bubbles = false) {
 
             if(UPDATES[subId][k]) {
                 console.log(data)
-                const passData = noRdfn ? data : _state() 
+                const passData = STORES[subId][NO_REDUCER] ? data : _state() 
                 console.log('passData ' + JSON.stringify(passData, null, 2))
                 console.log(subId)
                 UPDATES[subId][k].forEach(f => f(passData))
             }
         })
+        return 
     }
 
     if(bubbles) {
@@ -57,22 +56,30 @@ Html.prototype.dispatch = function(k, data, bubbles = false) {
         }
     }    
 
-    if(id === 'olive-default-dispatcher') return
     if(UPDATES[id] && UPDATES[id][k]) {
-        const passData = nearestStore[NO_REDUCER] ? data : state() 
+        const passData = STORES[id][NO_REDUCER] ? data : state()
         UPDATES[id][k].forEach(f => f(passData))
     }
 }
 
-export const getNearestStore = (elem) => {
+export const getNearestStore = (elem) => {    
     let nearestStore
-    let m_store = elem
-    while(m_store) {
-        if(m_store.store) {
-            nearestStore = m_store.store
+    let element_might_have_store = elem
+    while(element_might_have_store) {
+        if(element_might_have_store.store) {
+            nearestStore = element_might_have_store.store
+
             break
         }
-        else m_store = m_store.parentElement
+        else {
+            if(element_might_have_store.previousElementSibling) {
+                element_might_have_store = element_might_have_store.previousElementSibling
+            }
+            else if(element_might_have_store.parentElement) {
+                element_might_have_store = element_might_have_store.parentElement
+            }
+            else element_might_have_store = null
+        }
     }
     return nearestStore
 }

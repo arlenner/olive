@@ -1,7 +1,6 @@
 import { recursiveDrop } from "../utils/drop"
 import { html, Html } from "./html"
 import { PARENT, TARGET } from './symbols'
-import { HtmlCursor } from './types'
 import './root'
 
 /**
