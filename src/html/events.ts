@@ -4,26 +4,6 @@ import { Html } from './html'
 import { defaultDispatcher } from './state'
 import { DISPATCHER_ID, NO_REDUCER, TARGET } from './symbols'
 
-const injectDispatcher = function(cur, disp_id) {
-    const STORES = getStores()
-    const UPDATES = getUpdates()
-
-    let dispatcher = STORES[disp_id]    
-    let hx = Html.from(cur)
-    
-    hx.dispatch = (k, data) => {    
-        const { dispatch, state, [NO_REDUCER]: noReducer } = dispatcher
-    
-        dispatch([k, data])
-        
-        if(UPDATES[k]) {
-            const passData = noReducer ? data : state()
-            UPDATES[k].forEach(f => f(passData))
-        }
-    }
-    return hx
-}
-
 /**
  * Subscribe to an action. When `html().dispatch(key, data)` is called, all subscribers of `key` will have their registered `cb` function called.
  * 
@@ -33,7 +13,6 @@ const injectDispatcher = function(cur, disp_id) {
  */
 Html.prototype.subscribe = function(k, cb) {
     const UPDATES = getUpdates()
-    const STORES = getStores()
 
     if(typeof k === 'object') {
         let self = this
@@ -65,10 +44,14 @@ Html.prototype.injectDispatcher = function() {
     const STORES = getStores()
 
     let cur = this[TARGET]
-    let disp_id = this[TARGET][DISPATCHER_ID]
+    let disp_id = this[TARGET][DISPATCHER_ID] || defaultDispatcher().id
 
     const hx = Html.from(cur)
+
+    //return early here
+    if(disp_id === defaultDispatcher().id) return hx
     
+    //else set overridden dispatch function with injected dispatcher
     hx.dispatch = (k, data) => {
         const dispatcher = STORES[disp_id]    
         const { dispatch, state, [NO_REDUCER]: noReducer } = dispatcher
@@ -80,7 +63,7 @@ Html.prototype.injectDispatcher = function() {
             UPDATES[k].forEach(f => f(passData))
         }
     }
-    
+
     return hx
 }
 
@@ -97,13 +80,10 @@ Html.prototype.injectDispatcher = function() {
  * @returns 
  */
 Html.prototype.on = function(k, cb, preventDefault = true) {
-    const UPDATES = getUpdates()
-    const STORES = getStores()
 
     let cur = this[TARGET]
 
-    const hx = this.injectDispatcher()
-    
+    const hx = this.injectDispatcher()    
     
     function listener(e) {
         if(preventDefault) e.preventDefault()
@@ -128,7 +108,10 @@ Html.prototype.on = function(k, cb, preventDefault = true) {
  */
 Html.prototype.timer = function(t, f) {
     const self = this[TARGET]
-    const to = setTimeout(() => f(Html.from(self)), t)
+
+    const hx = this.injectDispatcher()
+
+    const to = setTimeout(() => f(hx, t))
     setDrop(self, () => clearTimeout(to))
     return this
 }

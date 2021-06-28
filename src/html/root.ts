@@ -8,7 +8,7 @@ import { PARENT } from "./symbols"
  */
 Html.prototype.root = function() {
     let mtop = this[PARENT]
-
+    
     while(mtop.parentElement) {
         mtop = mtop.parentElement
     }

@@ -17,7 +17,7 @@ const App = () =>
     html()
         .h1()
         .text('Hello from div 1')
-        .use(randomDispatcher, TestDispatcher)
+        .use(randomDispatcher)
         .subscribe({
             'hello event': (hx, {someValue}) => hx.text(someValue),
             'some other event': (hx, {someValue}) => {
@@ -25,6 +25,7 @@ const App = () =>
             }
         })
         .concat(Component())
+        .concat(ComponentWithDefaultDispatcher())
 
 const Component = () =>
     html()
@@ -40,7 +41,16 @@ const Component = () =>
         .text('touch me')
         .on('click', hx => hx.dispatch('hello event', 'new data'))
 
+        
 
+const ComponentWithDefaultDispatcher = () =>
+    html()
+        .div()
+        .text('I am another div.')
+        .on('click', hx => hx.dispatch('div clicked'))
+        .subscribe({
+            'div clicked': hx => hx.text('I got clicked! Yay.')
+        })
 // window.App = App
 
 App().mount('root')
