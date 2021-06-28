@@ -56,7 +56,7 @@ Html.prototype.denest = function() {
 Html.prototype.mount = function(root) {
     let r = document.getElementById(root)
     r.replaceWith(this.root())
-    return Html.from(r)
+    // return Html.from(r)
 }
 
 /**
@@ -66,9 +66,19 @@ Html.prototype.mount = function(root) {
  * @returns {HtmlCursor}
  */
 Html.prototype.text = function(str) {
-    if(arguments.length === 0) 
-      return this[TARGET].textContent
-  
-    this[TARGET].textContent = str
+    let node: Node = Array.from(this[TARGET].childNodes).find((child: Node) => child.nodeType === Node.TEXT_NODE) as Node
+
+    if(arguments.length === 0) {
+        if(node)
+            return node.textContent
+        else return ''
+    }
+
+    if(node) {
+        node.textContent = str
+    } else {        
+        this[TARGET].textContent = str
+    }
+    
     return this
 }

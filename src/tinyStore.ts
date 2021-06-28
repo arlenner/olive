@@ -40,6 +40,7 @@ export const tinyStore = ({id = 'olive-default-dispatcher', model = null, reduce
     
     const state = () => store  
     
+    //[k: string, data?: any]
     const dispatch = action => { 
         if(dispatching) {
             queue.push(action)

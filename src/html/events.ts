@@ -1,8 +1,28 @@
 import { setDrop } from '../utils/drop'
-import { getUpdates } from './globalVars'
+import { getStores, getUpdates } from './globalVars'
 import { Html } from './html'
-import { defaultDispatcher, getNearestStore } from './state'
-import { TARGET } from './symbols'
+import { defaultDispatcher } from './state'
+import { DISPATCHER_ID, NO_REDUCER, TARGET } from './symbols'
+
+const injectDispatcher = function(cur, disp_id) {
+    const STORES = getStores()
+    const UPDATES = getUpdates()
+
+    let dispatcher = STORES[disp_id]    
+    let hx = Html.from(cur)
+    
+    hx.dispatch = (k, data) => {    
+        const { dispatch, state, [NO_REDUCER]: noReducer } = dispatcher
+    
+        dispatch([k, data])
+        
+        if(UPDATES[k]) {
+            const passData = noReducer ? data : state()
+            UPDATES[k].forEach(f => f(passData))
+        }
+    }
+    return hx
+}
 
 /**
  * Subscribe to an action. When `html().dispatch(key, data)` is called, all subscribers of `key` will have their registered `cb` function called.
@@ -11,9 +31,9 @@ import { TARGET } from './symbols'
  * @param {(hx: Html, model: {[k: string]: any}) => Html} cb 
  * @returns 
  */
-Html.prototype.subscribe = function(k, cb, spec = null) {
+Html.prototype.subscribe = function(k, cb) {
     const UPDATES = getUpdates()
-    const { id } = spec || getNearestStore(this[TARGET]) || defaultDispatcher()
+    const STORES = getStores()
 
     if(typeof k === 'object') {
         let self = this
@@ -22,22 +42,46 @@ Html.prototype.subscribe = function(k, cb, spec = null) {
         })
         return this
     }
+    let cur = this[TARGET]    
+    const hx = this.injectDispatcher()
 
-    let cur = this[TARGET]
-    
-    const listener = data => cb(Html.from(cur), data)
+    const listener = data => cb(hx, data)
 
     const drop = () => {
-        UPDATES[id][k].splice(
-            UPDATES[id][k].indexOf(listener), 1
+        UPDATES[k].splice(
+            UPDATES[k].indexOf(listener), 1
         )
     }
-    UPDATES[id]     ||= {}
-    UPDATES[id][k]  ||= []
-    UPDATES[id][k].push(listener)
+
+    UPDATES[k]  ||= []
+    UPDATES[k].push(listener)
     setDrop(cur, drop)
 
     return this
+}
+
+Html.prototype.injectDispatcher = function() {
+    const UPDATES = getUpdates()
+    const STORES = getStores()
+
+    let cur = this[TARGET]
+    let disp_id = this[TARGET][DISPATCHER_ID]
+
+    const hx = Html.from(cur)
+    
+    hx.dispatch = (k, data) => {
+        const dispatcher = STORES[disp_id]    
+        const { dispatch, state, [NO_REDUCER]: noReducer } = dispatcher
+    
+        dispatch([k, data])
+        
+        if(UPDATES[k]) {
+            const passData = noReducer ? data : state()
+            UPDATES[k].forEach(f => f(passData))
+        }
+    }
+    
+    return hx
 }
 
 /**
@@ -53,11 +97,19 @@ Html.prototype.subscribe = function(k, cb, spec = null) {
  * @returns 
  */
 Html.prototype.on = function(k, cb, preventDefault = true) {
+    const UPDATES = getUpdates()
+    const STORES = getStores()
+
     let cur = this[TARGET]
+
+    const hx = this.injectDispatcher()
+    
+    
     function listener(e) {
         if(preventDefault) e.preventDefault()
-        cb(Html.from(cur), e)
+        cb(hx, e)
     }
+    
     const drop = () => 
         cur.removeEventListener(k, listener)
   

@@ -18,3 +18,10 @@ export const TARGET    = Symbol.for('target-elem')
  * @type {symbol}
  */
 export const NO_REDUCER = Symbol.for('no-reducer')
+
+/**
+ * Global DISPATCHER_ID symbol. 
+ * @name dispatcherId
+ * @type {symbol}
+ */
+export const DISPATCHER_ID = Symbol.for('dispatcher-id')

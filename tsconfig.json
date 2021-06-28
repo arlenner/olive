@@ -2,9 +2,9 @@
     "compilerOptions": {
         "target": "ES5",
         "noEmit": false,
-        "outDir": "dist",
+        "outDir": "test/dist",
         "declaration": true,
         "lib": ["ES2017", "ES7", "ES6", "DOM"],
     },
-    "exclude": ["node_modules", "dist"]
+    "exclude": ["node_modules", "dist", "test"]
 }

@@ -15,7 +15,6 @@ import { HtmlConstructor, HtmlCursor, Dispatcher, HtmlCore } from './html/types'
 import { 
     defaultDispatcher as _defaultDispatcher, 
     customDispatcher as _customDispatcher,
-    getNearestStore
 }                                               from './html/state'
 import { navigate as _navigate }                from './html/router'
 import { html as _html, Html as _Html}          from './html/html'

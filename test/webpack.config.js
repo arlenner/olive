@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
  
 module.exports = {
-    entry: ['@babel/polyfill',  path.resolve(__dirname, './index.js')],
+    entry: [path.resolve(__dirname, './index.js')],
     module: {
         rules: [
             {
@@ -17,6 +17,7 @@ module.exports = {
         extensions: ['*', '.js'],
         
     },
+    mode: 'development',
     node: {
         global: true
     },
